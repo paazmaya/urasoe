@@ -1,14 +1,14 @@
-/**
- * Configuration handling for ControlNet Image Generator
- * 
- * This module provides structures and methods for reading and managing
- * configuration settings from both command line arguments and a configuration file.
- */
-use std::fs;
 use anyhow::{Context, Result};
 use clap::Parser;
 use colored::*;
 use serde::{Deserialize, Serialize};
+/**
+ * Configuration handling for ControlNet Image Generator
+ *
+ * This module provides structures and methods for reading and managing
+ * configuration settings from both command line arguments and a configuration file.
+ */
+use std::fs;
 
 /// Default path for the configuration file
 pub const DEFAULT_CONFIG_PATH: &str = "urasoe.config.yml";

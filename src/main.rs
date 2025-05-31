@@ -119,7 +119,7 @@ async fn main() -> Result<()> {
         match result {
             Ok(Some(generated)) => {
                 if let Ok(_) =
-                    file_utils::FileManager::save_generated_images(&generated, &image_path, &config)
+                    file_utils::FileManager::save_generated_images(&generated, image_path, &config)
                 {
                     stats.success_count += 1;
                     stats.generated_count += generated.images.len();

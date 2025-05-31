@@ -44,6 +44,12 @@ pub struct RetryManager {
     retry_delay_ms: u64,
 }
 
+impl Default for RetryManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl RetryManager {
     /// Create a new RetryManager with default settings
     #[allow(dead_code)]
@@ -170,6 +176,12 @@ impl RetryManager {
 pub struct BatchManager {
     batch_size: u32,
     break_duration_ms: u64,
+}
+
+impl Default for BatchManager {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl BatchManager {

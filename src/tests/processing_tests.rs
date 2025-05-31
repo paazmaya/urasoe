@@ -4,7 +4,6 @@
 #[cfg(test)]
 mod processing_tests {
     use crate::processing::{BatchManager, ProcessingStats, RetryManager};
-    use std::path::Path;
 
     #[test]
     fn test_processing_stats_display() {
