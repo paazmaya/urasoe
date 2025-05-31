@@ -1,0 +1,19 @@
+[package]
+name = "urasoe"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Generate images with ControlNet by reading images from a folder and calling Stable Diffusion API"
+
+[dependencies]
+clap = { version = "4.5.1", features = ["derive"] }
+tokio = { version = "1.36.0", features = ["full"] }
+reqwest = { version = "0.11.24", features = ["json"] }
+serde = { version = "1.0.195", features = ["derive"] }
+serde_json = "1.0.114"
+serde_yaml = "0.9.30"
+base64 = "0.21.7"
+anyhow = "1.0.79"
+colored = "2.1.0"
+image = "0.24.8"
+chrono = "0.4.34"

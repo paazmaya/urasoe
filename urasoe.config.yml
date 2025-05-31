@@ -1,0 +1,36 @@
+# ImageMimic Configuration File
+
+# Path settings
+input_dir: "./public/images"
+output_dir: "./generated-images"
+
+# Image generation settings
+batch_size: 4
+width: 768
+height: 768
+steps: 30
+cfg: 7.5
+
+# ControlNet settings
+model: "canny"  # Options: canny, depth, pose, etc.
+controlnet_module: "canny"  # Module: canny, depth, openpose, etc.
+controlnet_weight: 0.8  # Weight of ControlNet influence (0.0-1.0)
+
+# Sampler settings
+sampler_name: "DPM++ 2M"  # Sampler algorithm to use
+scheduler: "Karras"  # Scheduler for the sampler
+
+# Model settings
+checkpoint_model: "realisticVisionV51_v51VAE"
+
+# API settings
+sd_api_url: "http://127.0.0.1:7860/"
+
+# Prompt settings
+prompt: "karate master in dojo, high detail, realistic photography"
+negative_prompt: "deformed, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, badly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, ((((ugly)))), (((deformed))), ((bad anatomy)), (((bad proportions))), ((extra limbs)), cloned face, glitchy"
+
+# Error handling settings
+max_retries: 3  # Maximum number of retry attempts for failed operations
+retry_delay_ms: 10000  # Base delay between retries in milliseconds
+batch_break_ms: 15000  # Break duration between batches in milliseconds
