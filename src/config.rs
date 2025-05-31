@@ -1,13 +1,16 @@
+/**
+ * Configuration handling for ControlNet Image Generator
+ * 
+ * This module provides structures and methods for reading and managing
+ * configuration settings from both command line arguments and a configuration file.
+ */
+use std::fs;
 use anyhow::{Context, Result};
 use clap::Parser;
 use colored::*;
 use serde::{Deserialize, Serialize};
-/**
- * Configuration handling for ControlNet Image Generator
- */
-use std::fs;
 
-// Default config file path
+/// Default path for the configuration file
 pub const DEFAULT_CONFIG_PATH: &str = "urasoe.config.yml";
 
 /// Command line arguments
@@ -83,62 +86,82 @@ pub struct Args {
 pub struct Config {
     // Path settings
     #[serde(default = "default_input_dir")]
+    /// Directory containing input images
     pub input_dir: String,
     #[serde(default = "default_output_dir")]
+    /// Directory where output images will be saved
     pub output_dir: String,
 
     // Image generation settings
     #[serde(default = "default_batch_size")]
+    /// Number of images to generate for each input
     pub batch_size: u32,
     #[serde(default = "default_width")]
+    /// Width of generated images
     pub width: u32,
     #[serde(default = "default_height")]
+    /// Height of generated images
     pub height: u32,
     #[serde(default = "default_steps")]
+    /// Number of sampling steps
     pub steps: u32,
     #[serde(default = "default_cfg")]
+    /// CFG scale for generation
     pub cfg: f32,
 
     // ControlNet settings
     #[serde(default = "default_model")]
+    /// ControlNet model to use
     pub model: String,
     #[serde(default = "default_controlnet_module")]
+    /// ControlNet module to use (e.g., canny, depth, pose)
     pub controlnet_module: String,
     #[serde(default = "default_controlnet_weight")]
+    /// ControlNet weight (0.0-1.0)
     pub controlnet_weight: f32,
 
     // Sampler settings
     #[serde(default = "default_sampler_name")]
+    /// Sampler name to use (e.g., DPM++ 2M, Euler a)
     pub sampler_name: String,
     #[serde(default = "default_sampler_index")]
+    /// Scheduler to use (e.g., Karras)
     pub scheduler: String,
 
     // Model settings
     #[serde(default = "default_checkpoint_model")]
+    /// Checkpoint model name
     pub checkpoint_model: String,
 
     // API settings
     #[serde(default = "default_sd_api_url")]
+    /// URL for the Stable Diffusion API
     pub sd_api_url: String,
 
     // Prompt settings
     #[serde(default = "default_prompt")]
+    /// Prompt for image generation
     pub prompt: String,
     #[serde(default = "default_negative_prompt")]
+    /// Negative prompt to exclude certain features
     pub negative_prompt: String,
 
     // Error handling settings
     #[serde(default = "default_max_retries")]
+    /// Maximum number of retry attempts
     pub max_retries: u32,
     #[serde(default = "default_retry_delay")]
+    /// Delay between retries in milliseconds
     pub retry_delay_ms: u64,
 
     // Batch processing settings
     #[serde(default = "default_batch_break")]
+    /// Break duration between batches in milliseconds
     pub batch_break_ms: u64,
 
     // Printing visibility
     #[serde(skip)]
+    /// If true, enables verbose printing
     pub verbose: bool,
 }
 

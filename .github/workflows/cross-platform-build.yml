@@ -1,0 +1,133 @@
+name: Cross-Platform Build
+
+# Ensures the project builds on multiple platforms (Windows, macOS, Linux)
+# - Builds on all platforms for every push and PR
+# - Creates GitHub releases with binaries when a version tag is pushed
+
+on:
+  push:
+    branches: [ main ]
+    tags: ['v*']
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    # Build the project on multiple operating systems
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: urasoe
+            asset_name: urasoe-linux-amd64
+          - os: windows-latest
+            artifact_name: urasoe.exe
+            asset_name: urasoe-windows-amd64.exe
+          - os: macOS-latest
+            artifact_name: urasoe
+            asset_name: urasoe-macos-amd64
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Build release binary
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+      
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.asset_name }}
+          path: target/release/${{ matrix.artifact_name }}
+
+  # Create GitHub release with assets when a tag is pushed
+  # To use: git tag v1.0.0 && git push --tags
+  release:
+    name: Create Release
+    needs: [build]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      
+      - name: Download Linux Build
+        uses: actions/download-artifact@v3
+        with:
+          name: urasoe-linux-amd64
+          path: ./
+      
+      - name: Download Windows Build
+        uses: actions/download-artifact@v3
+        with:
+          name: urasoe-windows-amd64.exe
+          path: ./
+      
+      - name: Download macOS Build
+        uses: actions/download-artifact@v3
+        with:
+          name: urasoe-macos-amd64
+          path: ./
+      
+      - name: Upload Linux Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./urasoe-linux-amd64
+          asset_name: urasoe-linux-amd64
+          asset_content_type: application/octet-stream
+      
+      - name: Upload Windows Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./urasoe-windows-amd64.exe
+          asset_name: urasoe-windows-amd64.exe
+          asset_content_type: application/octet-stream
+      
+      - name: Upload macOS Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./urasoe-macos-amd64
+          asset_name: urasoe-macos-amd64
+          asset_content_type: application/octet-stream

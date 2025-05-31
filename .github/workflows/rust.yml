@@ -1,0 +1,124 @@
+name: Rust CI
+
+# Main CI workflow: Runs lint, test and build jobs for the Rust project
+# - Lint: Runs Clippy to check code quality issues
+# - Test: Runs the test suite to verify functionality
+# - Build: Builds the project in both debug and release modes
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint:
+    # Run Clippy to catch coding errors and enforce style
+    name: Lint with Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: clippy
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-clippy-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-clippy-
+      
+      - name: Run clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -- -D warnings
+
+  test:
+    # Run the test suite to ensure functionality works correctly
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-test-
+      
+      - name: Run tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all
+
+  build:
+    # Build the project in both debug and release modes
+    name: Build Project
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    strategy:
+      matrix:
+        build-mode: [debug, release]
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-build-${{ matrix.build-mode }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-${{ matrix.build-mode }}-
+            ${{ runner.os }}-cargo-build-
+      
+      - name: Build in ${{ matrix.build-mode }} mode
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: ${{ matrix.build-mode == 'release' && '--release' || '' }}
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: urasoe-${{ matrix.build-mode }}
+          path: |
+            target/${{ matrix.build-mode }}/urasoe
+            target/${{ matrix.build-mode }}/urasoe.exe
+          if-no-files-found: ignore
