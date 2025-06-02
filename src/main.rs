@@ -21,12 +21,12 @@ use config::{Args, Config};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let args = Args::parse();
+    let args: Args = Args::parse();
 
     println!("{}", "ControlNet Image Generator Starting...".blue());
 
     // Load configuration from file
-    let mut config = Config::load(&args.config)?;
+    let mut config: Config = Config::load(&args.config)?;
 
     // Override with command line arguments
     config.apply_args(&args);
@@ -80,7 +80,7 @@ async fn main() -> Result<()> {
     fs::create_dir_all(&config.output_dir).context("Failed to create output directory")?;
 
     // Using our improved image processor
-    let image_paths = image::ImageProcessor::get_image_list(&config.input_dir)?;
+    let image_paths: Vec<std::path::PathBuf> = image::ImageProcessor::get_image_list(&config.input_dir)?;
 
     if image_paths.is_empty() {
         println!("{} {}", "No images found in".red(), config.input_dir);

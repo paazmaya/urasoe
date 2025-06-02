@@ -1,13 +1,17 @@
-use anyhow::{Context, Result};
-use clap::Parser;
-use colored::*;
-use serde::{Deserialize, Serialize};
 /**
  * Configuration handling for ControlNet Image Generator
  *
  * This module provides structures and methods for reading and managing
  * configuration settings from both command line arguments and a configuration file.
+ * 
+ * The default values defined in this file are synchronized with those in the 
+ * urasoe.config.yml file. If changes are made to the default configuration,
+ * both this file and the YAML file should be updated to maintain consistency.
  */
+use anyhow::{Context, Result};
+use clap::Parser;
+use colored::*;
+use serde::{Deserialize, Serialize};
 use std::fs;
 
 /// Default path for the configuration file
@@ -84,7 +88,7 @@ pub struct Args {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
-    // Path settings
+    // Path settings. Serde default is the function name that returns the default value.
     #[serde(default = "default_input_dir")]
     /// Directory containing input images
     pub input_dir: String,
@@ -165,61 +169,80 @@ pub struct Config {
     pub verbose: bool,
 }
 
-// Default functions for Config
+// Default functions for Config - These values match those in urasoe.config.yml
+/// Default input directory - "./public/images" from config file
 pub fn default_input_dir() -> String {
     "./public/images".to_string()
 }
+/// Default output directory - "./generated-images" from config file
 pub fn default_output_dir() -> String {
     "./generated-images".to_string()
 }
+/// Default batch size - 4 from config file
 pub fn default_batch_size() -> u32 {
     4
 }
+/// Default image width - 768 from config file
 pub fn default_width() -> u32 {
     768
 }
+/// Default image height - 768 from config file
 pub fn default_height() -> u32 {
     768
 }
+/// Default sampling steps - 30 from config file
 pub fn default_steps() -> u32 {
     30
 }
+/// Default CFG scale - 7.5 from config file
 pub fn default_cfg() -> f32 {
     7.5
 }
+/// Default ControlNet model - "canny" from config file
 pub fn default_model() -> String {
     "canny".to_string()
 }
+/// Default ControlNet module - "canny" from config file
 pub fn default_controlnet_module() -> String {
     "canny".to_string()
 }
+/// Default ControlNet weight - 0.8 from config file
 pub fn default_controlnet_weight() -> f32 {
     0.8
 }
+/// Default sampler name - "DPM++ 2M" from config file
 pub fn default_sampler_name() -> String {
     "DPM++ 2M".to_string()
 }
+/// Default scheduler - "Karras" from config file
 pub fn default_sampler_index() -> String {
     "Karras".to_string()
 }
+/// Default checkpoint model - "realisticVisionV51_v51VAE" from config file
 pub fn default_checkpoint_model() -> String {
     "realisticVisionV51_v51VAE".to_string()
 }
+/// Default Stable Diffusion API URL - "http://127.0.0.1:7860/" from config file
 pub fn default_sd_api_url() -> String {
     "http://127.0.0.1:7860/".to_string()
 }
+/// Default prompt - from config file
 pub fn default_prompt() -> String {
     "karate master in dojo, high detail, realistic photography".to_string()
 }
+/// Default negative prompt - from config file
 pub fn default_negative_prompt() -> String {
     "deformed, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, badly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, ((((ugly)))), (((deformed))), ((bad anatomy)), (((bad proportions))), ((extra limbs)), cloned face, glitchy".to_string()
 }
+/// Default maximum retries - 3 from config file
 pub fn default_max_retries() -> u32 {
     3
 }
+/// Default retry delay - 10000ms from config file
 pub fn default_retry_delay() -> u64 {
     10000
 }
+/// Default batch break duration - 15000ms from config file
 pub fn default_batch_break() -> u64 {
     15000
 }
