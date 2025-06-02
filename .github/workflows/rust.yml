@@ -20,7 +20,7 @@ jobs:
     name: Lint with Clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -52,7 +52,7 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -87,7 +87,7 @@ jobs:
       matrix:
         build-mode: [debug, release]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
