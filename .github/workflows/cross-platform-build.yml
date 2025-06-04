@@ -60,7 +60,7 @@ jobs:
           args: --release
       
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset_name }}
           path: target/release/${{ matrix.artifact_name }}
@@ -85,19 +85,19 @@ jobs:
           prerelease: false
       
       - name: Download Linux Build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: urasoe-linux-amd64
           path: ./
       
       - name: Download Windows Build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: urasoe-windows-amd64.exe
           path: ./
       
       - name: Download macOS Build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: urasoe-macos-amd64
           path: ./
