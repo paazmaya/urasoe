@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Use pull request HEAD commit instead of merge commit
+          ref: ${{ github.event.pull_request.head.sha }}
       
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -53,6 +56,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Use pull request HEAD commit instead of merge commit
+          ref: ${{ github.event.pull_request.head.sha }}
       
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -100,6 +106,9 @@ jobs:
         build-mode: [debug, release]
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Use pull request HEAD commit instead of merge commit
+          ref: ${{ github.event.pull_request.head.sha }}
       
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
