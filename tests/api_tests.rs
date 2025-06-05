@@ -1,7 +1,7 @@
 //! API module tests for urasoe
 
 use std::path::Path;
-use urasoe::api::{StableDiffusionClient, StableDiffusionResponse, load_model as legacy_load_model, generate_with_controlnet as legacy_generate_with_controlnet};
+use urasoe::api::{StableDiffusionClient, load_model as legacy_load_model, generate_with_controlnet as legacy_generate_with_controlnet};
 use urasoe::config::Config;
 use reqwest::Client;
 

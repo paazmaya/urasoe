@@ -1,8 +1,6 @@
 //! Image module tests for urasoe
 
-use std::fs::File;
 use std::io::Write;
-use std::path::Path;
 use urasoe::image::{ImageProcessor, image_to_base64};
 
 #[test]

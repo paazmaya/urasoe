@@ -1,10 +1,5 @@
 //! File utils module tests for urasoe
 
-use std::fs;
-use std::path::Path;
-use urasoe::file_utils::{FileManager, save_generated_images};
-use urasoe::api::StableDiffusionResponse;
-use urasoe::config::Config;
 
 #[test]
 fn test_save_generated_images_empty() {
@@ -117,7 +112,7 @@ fn test_save_generated_images_unwritable_dir() {
             images: vec![png_base64.to_string()],
             parameters: None,
             info: None,
-        }, &fake_path, &config);
+        }, fake_path, &config);
         assert!(result.is_err());
     }
 }

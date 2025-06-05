@@ -1,4 +1,3 @@
-use std::fs;
 use std::io::Write;
 use std::path::Path;
 use tempfile::NamedTempFile;
@@ -50,7 +49,7 @@ fn test_default_config_values() {
     assert_eq!(config.max_retries, 3);
     assert_eq!(config.retry_delay_ms, 10000);
     assert_eq!(config.batch_break_ms, 15000);
-    assert_eq!(config.verbose, false);
+    assert!(!config.verbose);
 }
 
 /// Test loading config from a YAML file
@@ -191,11 +190,11 @@ fn test_verbose_flag() {
     let mut config = Config::load(&args.config).unwrap();
     
     // Initially verbose should be false
-    assert_eq!(config.verbose, false);
+    assert!(!config.verbose);
     
     // We could set it manually (this is typically set in main.rs)
     config.verbose = true;
-    assert_eq!(config.verbose, true);
+    assert!(config.verbose);
 }
 
 /// Test applying multiple command line arguments
