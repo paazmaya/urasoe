@@ -96,6 +96,12 @@ jobs:
         env:
           DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
 
+      - name: Upload Code coverage to Codacy
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh)
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
   build:
     # Build the project in both debug and release modes
     name: Build Project
