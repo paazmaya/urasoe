@@ -47,32 +47,30 @@ async fn main() -> Result<()> {
             "{} {}",
             "Using checkpoint model:".blue(),
             config.checkpoint_model
-        );
-        println!(
-            "{} {}",
+        );        println!(
+            "{} {} {}",
             "Using sampler:".blue(),
-            format!("{} {}", config.sampler_name, config.scheduler)
+            config.sampler_name,
+            config.scheduler
         );
         println!("{} {}", "Reading images from:".blue(), config.input_dir);
         println!("{} {}", "Saving output to:".blue(), config.output_dir);
-        println!("{} {}", "Batch size:".blue(), config.batch_size);
-        println!(
-            "{} {}",
+        println!("{} {}", "Batch size:".blue(), config.batch_size);        println!(
+            "{} {}x{}",
             "Image dimensions:".blue(),
-            format!("{}x{}", config.width, config.height)
+            config.width,
+            config.height
         );
         println!("{} {}", "Sampling steps:".blue(), config.steps);
         println!("{} {}", "CFG scale:".blue(), config.cfg);
-        println!("{} {}", "Max retries:".blue(), config.max_retries);
-        println!(
-            "{} {}",
+        println!("{} {}", "Max retries:".blue(), config.max_retries);        println!(
+            "{} {}ms",
             "Retry delay:".blue(),
-            format!("{}ms", config.retry_delay_ms)
-        );
-        println!(
-            "{} {}",
+            config.retry_delay_ms
+        );        println!(
+            "{} {}ms",
             "Batch break:".blue(),
-            format!("{}ms", config.batch_break_ms)
+            config.batch_break_ms
         );
     }
 
@@ -116,11 +114,8 @@ async fn main() -> Result<()> {
             .process_with_retry(&sd_client, &image_path, &config)
             .await;
 
-        match result {
-            Ok(Some(generated)) => {
-                if let Ok(_) =
-                    file_utils::FileManager::save_generated_images(&generated, image_path, &config)
-                {
+        match result {            Ok(Some(generated)) => {
+                if file_utils::FileManager::save_generated_images(&generated, image_path, &config).is_ok() {
                     stats.success_count += 1;
                     stats.generated_count += generated.images.len();
                 } else {
