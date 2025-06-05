@@ -103,4 +103,4 @@ To prevent GPU memory exhaustion when processing multiple images, the applicatio
 
 ## License
 
-MIT
+[Licensed under the MIT license.](./LICENSE)

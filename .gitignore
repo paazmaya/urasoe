@@ -1,1 +1,6 @@
 /target
+cobertura.xml
+packages/
+*.json
+*.js
+coverage.info
