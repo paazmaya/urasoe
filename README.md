@@ -3,6 +3,7 @@
 [![Rust CI](https://github.com/paazmaya/urasoe/actions/workflows/rust.yml/badge.svg)](https://github.com/paazmaya/urasoe/actions/workflows/rust.yml)
 [![Cross-Platform Build](https://github.com/paazmaya/urasoe/actions/workflows/cross-platform-build.yml/badge.svg)](https://github.com/paazmaya/urasoe/actions/workflows/cross-platform-build.yml)
 [![Security Audit](https://github.com/paazmaya/urasoe/actions/workflows/audit.yml/badge.svg)](https://github.com/paazmaya/urasoe/actions/workflows/audit.yml)
+[![DeepSource](https://app.deepsource.com/gh/paazmaya/urasoe.svg/?label=active+issues&show_trend=true&token=AOeYFYo9zWVacb1YM7XOWak5)](https://app.deepsource.com/gh/paazmaya/urasoe/)
 
 A Rust utility that reads images from a directory, then uses locally running Stable Diffusion Automatic1111 and its ControlNet plugin to generate images that mimic the shapes and features of the originals.
 

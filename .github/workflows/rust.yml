@@ -78,6 +78,18 @@ jobs:
           command: test
           args: --all
 
+      - name: Generate Code coverage
+        run: |
+          cargo +stable install cargo-llvm-cov
+          cargo llvm-cov --lcov --output-path coverage.info
+
+      - name: Upload Code coverage to DeepSource
+        run: |
+          curl https://deepsource.io/cli | sh
+          ./bin/deepsource report --analyzer test-coverage --key rust --value-file ./coverage.info
+        env:
+          DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
+
   build:
     # Build the project in both debug and release modes
     name: Build Project
