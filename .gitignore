@@ -4,3 +4,4 @@ packages/
 *.json
 *.js
 coverage.info
+tarpaulin-report.html

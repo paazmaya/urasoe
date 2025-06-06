@@ -67,6 +67,12 @@ impl RetryManager {
             retry_delay_ms,
         }
     }
+    
+    /// Get the maximum number of retry attempts (for testing purposes)
+    #[allow(dead_code)]
+    pub fn get_max_retries(&self) -> u32 {
+        self.max_retries
+    }
 
     /// Process an image with retry logic
     ///
@@ -164,11 +170,37 @@ impl RetryManager {
     /// Check if an error is likely related to CUDA/GPU memory issues
     pub fn is_cuda_error(&self, error: &anyhow::Error) -> bool {
         let error_msg = error.to_string().to_lowercase();
-        error_msg.contains("cuda")
-            || error_msg.contains("gpu")
-            || error_msg.contains("memory")
-            || error_msg.contains("out of memory")
-            || error_msg.contains("timed out")
+        
+        // GPU-specific terms
+        if error_msg.contains("cuda") || 
+           error_msg.contains("gpu") || 
+           error_msg.contains("vram") ||
+           error_msg.contains("nvidia") {
+            return true;
+        }
+        
+        // More specific memory-related phrases that are likely GPU-related
+        // Make sure we exclude system memory errors by checking for system/heap indicators
+        if (error_msg.contains("out of memory") && !error_msg.contains("heap") && !error_msg.contains("system")) || 
+           (error_msg.contains("memory exhausted") && !error_msg.contains("system")) ||
+           (error_msg.contains("memory allocation failed") && !error_msg.contains("heap")) ||
+           (error_msg.contains("not enough") && error_msg.contains("memory") && !error_msg.contains("system")) {
+            return true;
+        }
+        
+        // Timeout often indicates GPU processing issues
+        if error_msg.contains("timed out") || 
+           error_msg.contains("timeout") && error_msg.contains("compute") {
+            return true;
+        }
+        
+        // Device-specific errors often related to GPU
+        if (error_msg.contains("device") && error_msg.contains("error")) ||
+           error_msg.contains("hardware error") {
+            return true;
+        }
+        
+        false
     }
 }
 
@@ -200,6 +232,15 @@ impl BatchManager {
             batch_size,
             break_duration_ms,
         }
+    }
+
+    /// Check if we should take a break after processing an item at the given index
+    ///
+    /// Returns true if the current item is the last in a batch (except for the very last item)
+    #[allow(dead_code)]
+    pub async fn should_take_break(&self, index: usize) -> bool {
+        // Check if this is the end of a batch (but not the last item)
+        (index + 1) % self.batch_size as usize == 0 && index > 0
     }
 
     /// Take a break between batches if needed

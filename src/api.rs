@@ -164,15 +164,27 @@ impl StableDiffusionClient {
         if !response.status().is_success() {
             let status = response.status();
             println!("{} {}", "API responded with status:".red(), status);
-            return Ok(None);
+            
+            // Try to get error details for better handling
+            let error_text = response.text().await.unwrap_or_default();
+            return Err(anyhow::anyhow!("API error: {} - {}", status, error_text));
         }
 
-        let result: StableDiffusionResponse = response
-            .json()
-            .await
-            .context("Failed to parse API response")?;
+        // Parse the response
+        let response_text = response.text().await.context("Failed to get response text")?;
+        
+        // Check if the response contains error information in JSON
+        if let Ok(error_json) = serde_json::from_str::<serde_json::Value>(&response_text) {
+            if let Some(error) = error_json.get("error").and_then(|e| e.as_str()) {
+                return Err(anyhow::anyhow!("API returned error: {}", error));
+            }
+        }
 
-        Ok(Some(result))
+        // Try to parse as StableDiffusionResponse
+        match serde_json::from_str::<StableDiffusionResponse>(&response_text) {
+            Ok(result) => Ok(Some(result)),
+            Err(e) => Err(anyhow::anyhow!("Failed to parse API response: {}", e))
+        }
     }
 }
 
