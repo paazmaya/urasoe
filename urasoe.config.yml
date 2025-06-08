@@ -12,7 +12,7 @@ steps: 30
 cfg: 7.5
 
 # ControlNet settings
-model: "canny"  # Options: canny, depth, pose, etc.
+model: "lineart"  # Options: canny, depth, pose, etc.
 controlnet_module: "canny"  # Module: canny, depth, openpose, etc.
 controlnet_weight: 0.8  # Weight of ControlNet influence (0.0-1.0)
 
@@ -21,7 +21,7 @@ sampler_name: "DPM++ 2M"  # Sampler algorithm to use
 scheduler: "Karras"  # Scheduler for the sampler
 
 # Model settings
-checkpoint_model: "realisticVisionV51_v51VAE"
+checkpoint_model: "ponyDiffusionV6XL_v6StartWithThisOne"
 
 # API settings
 sd_api_url: "http://127.0.0.1:7860/"

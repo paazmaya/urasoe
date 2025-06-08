@@ -165,9 +165,23 @@ impl RetryManager {
         );
 
         Err(error)
-    }
-
-    /// Check if an error is likely related to CUDA/GPU memory issues
+    }    /// Check if an error is likely related to CUDA/GPU memory issues
+    /// 
+    /// Analyzes error messages to determine if they are related to GPU memory problems.
+    /// This is used to decide whether to retry operations that might succeed with
+    /// a second attempt after GPU memory has been cleared.
+    ///
+    /// The method checks for several categories of GPU-related error patterns:
+    /// - Direct mentions of GPU technologies (CUDA, VRAM, NVIDIA)
+    /// - Memory errors that aren't explicitly system memory related
+    /// - Timeout errors that might indicate GPU processing issues
+    /// - Device-specific hardware errors
+    ///
+    /// # Arguments
+    /// * `error` - The error to analyze
+    ///
+    /// # Returns
+    /// `true` if the error appears to be GPU/CUDA related, `false` otherwise
     pub fn is_cuda_error(&self, error: &anyhow::Error) -> bool {
         let error_msg = error.to_string().to_lowercase();
         
@@ -241,9 +255,15 @@ impl BatchManager {
     pub async fn should_take_break(&self, index: usize) -> bool {
         // Check if this is the end of a batch (but not the last item)
         (index + 1) % self.batch_size as usize == 0 && index > 0
-    }
-
-    /// Take a break between batches if needed
+    }    /// Take a break between batches if needed
+    /// 
+    /// This method determines if the current processing index is at the end of a batch
+    /// (but not the final item overall), and if so, pauses processing for the configured
+    /// duration to allow GPU memory to clear.
+    ///
+    /// # Arguments
+    /// * `index` - Current processing index (0-based)
+    /// * `total_count` - Total number of items to process
     pub async fn manage_batch_break(&self, index: usize, total_count: usize) {
         let is_end_of_batch =
             (index + 1) % self.batch_size as usize == 0 && index < total_count - 1;
@@ -265,10 +285,16 @@ impl BatchManager {
 }
 
 /// Statistics for batch processing
+/// 
+/// Tracks and reports on the success and failure of image generation operations.
+/// Used to provide summary information to the user after processing is complete.
 #[derive(Debug, Default)]
 pub struct ProcessingStats {
+    /// Number of images successfully processed
     pub success_count: usize,
+    /// Total number of new images generated (may be greater than success_count due to multiple outputs)
     pub generated_count: usize,
+    /// Paths of images that failed processing
     pub failed_paths: Vec<String>,
 }
 

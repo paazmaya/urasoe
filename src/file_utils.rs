@@ -5,6 +5,11 @@ use colored::*;
 use serde::{Deserialize, Serialize};
 /**
  * File operations for ControlNet Image Generator
+ *
+ * This module handles file system operations for the application, including:
+ * - Saving generated images to the file system
+ * - Creating and maintaining metadata for generated images
+ * - Managing output directories and file naming conventions
  */
 use std::fs;
 use std::path::Path;
@@ -12,17 +17,31 @@ use std::path::Path;
 use crate::api::StableDiffusionResponse;
 use crate::config::Config;
 
+/// Metadata for generated images
+///
+/// Stores information about the generation process and parameters used,
+/// which is saved alongside the generated images for reproducibility.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ImageMetadata {
+    /// Timestamp when the image was generated
     timestamp: String,
+    /// Text prompt used for image generation
     prompt: String,
+    /// Negative prompt used for image generation
     negative_prompt: String,
+    /// ControlNet model used (e.g., canny, depth, openpose)
     controlnet_model: String,
+    /// Stable Diffusion checkpoint model used
     checkpoint_model: String,
+    /// Number of diffusion steps
     steps: u32,
+    /// CFG scale value used for generation
     cfg_scale: f32,
+    /// Width of the generated image in pixels
     width: u32,
+    /// Height of the generated image in pixels
     height: u32,
+    /// Filename of the source image used for ControlNet
     source_image: String,
 }
 
@@ -30,6 +49,18 @@ pub struct FileManager;
 
 impl FileManager {
     /// Save generated images and their metadata to the output directory
+    ///
+    /// Saves the generated images from the API response to the filesystem,
+    /// organizes them in directories based on the input image name, and
+    /// creates a metadata JSON file with the generation parameters.
+    ///
+    /// # Arguments
+    /// * `result` - The StableDiffusionResponse containing generated images
+    /// * `input_image_path` - Path to the original input image used
+    /// * `config` - Configuration settings used for generation
+    ///
+    /// # Returns
+    /// A Result indicating success or failure of the save operation
     pub fn save_generated_images(
         result: &StableDiffusionResponse,
         input_image_path: &Path,
