@@ -23,13 +23,46 @@ use config::{Args, Config};
 async fn main() -> Result<()> {
     let args: Args = Args::parse();
 
-    println!("{}", "ControlNet Image Generator Starting...".blue());
-
-    // Load configuration from file
+    println!("{}", "ControlNet Image Generator Starting...".blue());    // Load configuration from file
     let mut config: Config = Config::load(&args.config)?;
 
     // Override with command line arguments
     config.apply_args(&args);
+
+    // Create API client with timeout for option validation
+    let client = api::StableDiffusionClient::with_timeout(&config.sd_api_url, config.validate_timeout_ms);
+    
+    // Validate configuration options if enabled
+    if config.validate_options {
+        match client.validate_config_options(&config).await {
+            Ok(issues) => {
+                if !issues.is_empty() {
+                    println!("{}", "⚠️ Configuration validation issues found:".yellow().bold());
+                    for issue in issues {
+                        println!("{}", format!("  - {}", issue).yellow());
+                    }
+                    println!("{}", "Continue anyway? (Y/n)".yellow());
+                    let mut input = String::new();
+                    std::io::stdin().read_line(&mut input)?;
+                    if !input.trim().is_empty() && input.trim().to_lowercase() != "y" {
+                        return Ok(());
+                    }
+                } else {
+                    println!("{}", "✓ All configuration options are valid".green());
+                }
+            },
+            Err(e) => {
+                println!("{} {}", "Failed to validate configuration:".yellow(), e);
+                println!("{}", "Continue anyway? (Y/n)".yellow());
+                let mut input = String::new();
+                std::io::stdin().read_line(&mut input)?;
+                if !input.trim().is_empty() && input.trim().to_lowercase() != "y" {
+                    return Ok(());
+                }
+            }
+        }
+    }
+    
     // Print effective configuration
     if config.verbose {
         println!("{} {}", "Using ControlNet model:".blue(), config.model);

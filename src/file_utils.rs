@@ -14,8 +14,8 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 
-use crate::api::StableDiffusionResponse;
 use crate::config::Config;
+use crate::api::StableDiffusionResponse;
 
 /// Metadata for generated images
 ///

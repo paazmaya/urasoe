@@ -75,11 +75,17 @@ pub struct Args {
 
     /// Delay between retries in milliseconds
     #[arg(long)]
-    pub retry_delay: Option<u64>,
-
-    /// Break duration between batches in milliseconds
+    pub retry_delay: Option<u64>,    /// Break duration between batches in milliseconds
     #[arg(long)]
     pub batch_break: Option<u64>,
+    
+    /// Whether to validate options against the SD webui
+    #[arg(long)]
+    pub validate_options: Option<bool>,
+    
+    /// Timeout for validation requests in milliseconds
+    #[arg(long)]
+    pub validate_timeout: Option<u64>,
 
     /// Path to config file
     #[arg(long, default_value = DEFAULT_CONFIG_PATH)]
@@ -156,12 +162,18 @@ pub struct Config {
     pub max_retries: u32,
     #[serde(default = "default_retry_delay")]
     /// Delay between retries in milliseconds
-    pub retry_delay_ms: u64,
-
-    // Batch processing settings
+    pub retry_delay_ms: u64,    // Batch processing settings
     #[serde(default = "default_batch_break")]
     /// Break duration between batches in milliseconds
     pub batch_break_ms: u64,
+
+    // API validation settings
+    #[serde(default = "default_validate_options")]
+    /// Whether to verify available options from the SD webui
+    pub validate_options: bool,
+    #[serde(default = "default_validate_timeout")]
+    /// Timeout for option validation requests in milliseconds
+    pub validate_timeout_ms: u64,
 
     // Printing visibility
     #[serde(skip)]
@@ -247,6 +259,16 @@ pub fn default_batch_break() -> u64 {
     15000
 }
 
+/// Default for validating options - true from config file
+pub fn default_validate_options() -> bool {
+    true
+}
+
+/// Default timeout for option validation - 5000ms from config file
+pub fn default_validate_timeout() -> u64 {
+    5000
+}
+
 impl Config {
     // Load config from file, with defaults if file doesn't exist
     pub fn load(config_path: &str) -> Result<Self> {
@@ -271,10 +293,11 @@ impl Config {
                 checkpoint_model: default_checkpoint_model(),
                 sd_api_url: default_sd_api_url(),
                 prompt: default_prompt(),
-                negative_prompt: default_negative_prompt(),
-                max_retries: default_max_retries(),
+                negative_prompt: default_negative_prompt(),                max_retries: default_max_retries(),
                 retry_delay_ms: default_retry_delay(),
                 batch_break_ms: default_batch_break(),
+                validate_options: default_validate_options(),
+                validate_timeout_ms: default_validate_timeout(),
                 verbose: false,
             })
         }
@@ -321,9 +344,14 @@ impl Config {
         }
         if let Some(retry_delay) = args.retry_delay {
             self.retry_delay_ms = retry_delay;
-        }
-        if let Some(batch_break) = args.batch_break {
+        }        if let Some(batch_break) = args.batch_break {
             self.batch_break_ms = batch_break;
+        }
+        if let Some(validate_options) = args.validate_options {
+            self.validate_options = validate_options;
+        }
+        if let Some(validate_timeout) = args.validate_timeout {
+            self.validate_timeout_ms = validate_timeout;
         }
     }
 }

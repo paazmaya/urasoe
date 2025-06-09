@@ -6,18 +6,18 @@ output_dir: "./generated-images"
 
 # Image generation settings
 batch_size: 4
-width: 768
-height: 768
-steps: 30
+width: 512
+height: 512
+steps: 34
 cfg: 7.5
 
 # ControlNet settings
-model: "lineart"  # Options: canny, depth, pose, etc.
+model: "controlnetxlCNXL_hetanekoCanny-Pony"  # Options: canny, depth, pose, etc.
 controlnet_module: "canny"  # Module: canny, depth, openpose, etc.
 controlnet_weight: 0.8  # Weight of ControlNet influence (0.0-1.0)
 
 # Sampler settings
-sampler_name: "DPM++ 2M"  # Sampler algorithm to use
+sampler_name: "Euler a"  # Sampler algorithm to use
 scheduler: "Karras"  # Scheduler for the sampler
 
 # Model settings
@@ -27,10 +27,14 @@ checkpoint_model: "ponyDiffusionV6XL_v6StartWithThisOne"
 sd_api_url: "http://127.0.0.1:7860/"
 
 # Prompt settings
-prompt: "karate master in dojo, high detail, realistic photography"
+prompt: "masterpiece, high_quality, highres, 1girl, solo, long eyelashes, amateur, dark brown skin, white karate outfit, (blonde hair), long hair, straight hair, brown eyes,  karate lady  dark skin, medium  hair, black eyes, freckles  <lora:Sinozick_Style_XL_Pony:0.8> sinozick style, flat color, dark theme"
 negative_prompt: "deformed, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, badly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, blurry, ((((ugly)))), (((deformed))), ((bad anatomy)), (((bad proportions))), ((extra limbs)), cloned face, glitchy"
 
 # Error handling settings
 max_retries: 3  # Maximum number of retry attempts for failed operations
 retry_delay_ms: 10000  # Base delay between retries in milliseconds
 batch_break_ms: 15000  # Break duration between batches in milliseconds
+
+# API validation settings
+validate_options: true  # Whether to verify available options from the SD webui
+validate_timeout_ms: 5000  # Timeout for option validation requests in milliseconds
