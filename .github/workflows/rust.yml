@@ -143,7 +143,7 @@ jobs:
           args: ${{ matrix.build-mode == 'release' && '--release' || '' }}
       
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: urasoe-${{ matrix.build-mode }}
           path: |
