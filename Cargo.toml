@@ -3,7 +3,13 @@ name = "urasoe"
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
+authors = ["Juga Paazmaya <paazmaya@yahoo.com>"]
+homepage = "https://github.com/paazmaya/urasoe"
+repository = "https://github.com/paazmaya/urasoe"
 description = "Generate images with ControlNet by reading images from a folder and calling Stable Diffusion API"
+keywords = ["stable-diffusion", "controlnet", "image-generation", "cli"]
+categories = ["command-line-utilities", "multimedia::images"]
+include = ["src/**/*", "Cargo.toml", "LICENSE", "README.md"]
 
 [dependencies]
 clap = { version = "4.5.39", features = ["derive"] }
