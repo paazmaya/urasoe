@@ -46,8 +46,6 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-clippy-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-clippy-
       
       - name: Run clippy
         uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1.0.3
@@ -83,8 +81,6 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-test-
       
       - name: Run tests
         uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1.0.3
@@ -99,7 +95,9 @@ jobs:
 
       - name: Upload Code coverage to DeepSource
         run: |
-          curl https://deepsource.io/cli | sh
+          curl -fsSL -o deepsource_install.sh https://deepsource.io/cli
+          echo "87fa5949578588c57d21386dea7c0d14bc287a5a7c84d16a17913b4f15906299  deepsource_install.sh" | sha256sum -c -
+          sh ./deepsource_install.sh
           ./bin/deepsource report --analyzer test-coverage --key rust --value-file ./coverage.info
         env:
           DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
@@ -143,9 +141,6 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-build-${{ matrix.build-mode }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-build-${{ matrix.build-mode }}-
-            ${{ runner.os }}-cargo-build-
       
       - name: Build in ${{ matrix.build-mode }} mode
         uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1.0.3
