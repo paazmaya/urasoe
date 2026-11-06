@@ -17,6 +17,10 @@ on:
       - '**/Cargo.toml'
       - '**/Cargo.lock'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
@@ -31,20 +35,15 @@ jobs:
           persist-credentials: false
       
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1.0.7
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # v1
         with:
           toolchain: stable
-          profile: minimal
-          override: true
-      
+
+      - name: Install cargo binary installer
+        uses: cargo-bins/cargo-binstall@851112458b5f28a29e5bc14a690c3f283d9dcc6f # v1.26.2
+
       - name: Install cargo-audit
-        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1.0.3
-        with:
-          command: install
-          args: cargo-audit
+        run: cargo binstall --no-confirm cargo-audit
       
       - name: Run cargo-audit
-        uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1.0.3
-        with:
-          command: audit
-          args: --deny warnings
+        run: cargo audit --deny warnings
