@@ -5,3 +5,4 @@ packages/
 *.js
 coverage.info
 tarpaulin-report.html
+.DS_Store

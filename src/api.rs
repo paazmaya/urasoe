@@ -197,11 +197,10 @@ impl StableDiffusionClient {
         let response_text = response.text().await.context("Failed to get response text")?;
         
         // Check if the response contains error information in JSON
-        if let Ok(error_json) = serde_json::from_str::<serde_json::Value>(&response_text) {
-            if let Some(error) = error_json.get("error").and_then(|e| e.as_str()) {
+        if let Ok(error_json) = serde_json::from_str::<serde_json::Value>(&response_text)
+            && let Some(error) = error_json.get("error").and_then(|e| e.as_str()) {
                 return Err(anyhow::anyhow!("API returned error: {}", error));
             }
-        }
 
         // Try to parse as StableDiffusionResponse
         match serde_json::from_str::<StableDiffusionResponse>(&response_text) {

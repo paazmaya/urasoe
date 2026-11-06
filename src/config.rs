@@ -344,7 +344,8 @@ impl Config {
         }
         if let Some(retry_delay) = args.retry_delay {
             self.retry_delay_ms = retry_delay;
-        }        if let Some(batch_break) = args.batch_break {
+        }
+        if let Some(batch_break) = args.batch_break {
             self.batch_break_ms = batch_break;
         }
         if let Some(validate_options) = args.validate_options {

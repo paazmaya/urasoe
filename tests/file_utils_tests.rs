@@ -95,7 +95,7 @@ fn test_save_generated_images_unwritable_dir() {
             images: vec![png_base64.to_string()],
             parameters: None,
             info: None,
-        }, &fake_path, &config);
+        }, fake_path, &config);
         assert!(result.is_err());
     }
     #[cfg(windows)]

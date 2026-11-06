@@ -254,7 +254,7 @@ impl BatchManager {
     #[allow(dead_code)]
     pub async fn should_take_break(&self, index: usize) -> bool {
         // Check if this is the end of a batch (but not the last item)
-        (index + 1) % self.batch_size as usize == 0 && index > 0
+        (index + 1).is_multiple_of(self.batch_size as usize) && index > 0
     }    /// Take a break between batches if needed
     /// 
     /// This method determines if the current processing index is at the end of a batch
@@ -266,7 +266,7 @@ impl BatchManager {
     /// * `total_count` - Total number of items to process
     pub async fn manage_batch_break(&self, index: usize, total_count: usize) {
         let is_end_of_batch =
-            (index + 1) % self.batch_size as usize == 0 && index < total_count - 1;
+            (index + 1).is_multiple_of(self.batch_size as usize) && index < total_count - 1;
 
         if is_end_of_batch {
             println!(
