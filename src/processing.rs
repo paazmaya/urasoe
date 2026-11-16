@@ -67,7 +67,7 @@ impl RetryManager {
             retry_delay_ms,
         }
     }
-    
+
     /// Get the maximum number of retry attempts (for testing purposes)
     #[allow(dead_code)]
     pub fn get_max_retries(&self) -> u32 {
@@ -165,8 +165,9 @@ impl RetryManager {
         );
 
         Err(error)
-    }    /// Check if an error is likely related to CUDA/GPU memory issues
-    /// 
+    }
+    /// Check if an error is likely related to CUDA/GPU memory issues
+    ///
     /// Analyzes error messages to determine if they are related to GPU memory problems.
     /// This is used to decide whether to retry operations that might succeed with
     /// a second attempt after GPU memory has been cleared.
@@ -184,36 +185,44 @@ impl RetryManager {
     /// `true` if the error appears to be GPU/CUDA related, `false` otherwise
     pub fn is_cuda_error(&self, error: &anyhow::Error) -> bool {
         let error_msg = error.to_string().to_lowercase();
-        
+
         // GPU-specific terms
-        if error_msg.contains("cuda") || 
-           error_msg.contains("gpu") || 
-           error_msg.contains("vram") ||
-           error_msg.contains("nvidia") {
+        if error_msg.contains("cuda")
+            || error_msg.contains("gpu")
+            || error_msg.contains("vram")
+            || error_msg.contains("nvidia")
+        {
             return true;
         }
-        
+
         // More specific memory-related phrases that are likely GPU-related
         // Make sure we exclude system memory errors by checking for system/heap indicators
-        if (error_msg.contains("out of memory") && !error_msg.contains("heap") && !error_msg.contains("system")) || 
-           (error_msg.contains("memory exhausted") && !error_msg.contains("system")) ||
-           (error_msg.contains("memory allocation failed") && !error_msg.contains("heap")) ||
-           (error_msg.contains("not enough") && error_msg.contains("memory") && !error_msg.contains("system")) {
+        if (error_msg.contains("out of memory")
+            && !error_msg.contains("heap")
+            && !error_msg.contains("system"))
+            || (error_msg.contains("memory exhausted") && !error_msg.contains("system"))
+            || (error_msg.contains("memory allocation failed") && !error_msg.contains("heap"))
+            || (error_msg.contains("not enough")
+                && error_msg.contains("memory")
+                && !error_msg.contains("system"))
+        {
             return true;
         }
-        
+
         // Timeout often indicates GPU processing issues
-        if error_msg.contains("timed out") || 
-           error_msg.contains("timeout") && error_msg.contains("compute") {
+        if error_msg.contains("timed out")
+            || error_msg.contains("timeout") && error_msg.contains("compute")
+        {
             return true;
         }
-        
+
         // Device-specific errors often related to GPU
-        if (error_msg.contains("device") && error_msg.contains("error")) ||
-           error_msg.contains("hardware error") {
+        if (error_msg.contains("device") && error_msg.contains("error"))
+            || error_msg.contains("hardware error")
+        {
             return true;
         }
-        
+
         false
     }
 }
@@ -255,8 +264,9 @@ impl BatchManager {
     pub async fn should_take_break(&self, index: usize) -> bool {
         // Check if this is the end of a batch (but not the last item)
         (index + 1).is_multiple_of(self.batch_size as usize) && index > 0
-    }    /// Take a break between batches if needed
-    /// 
+    }
+    /// Take a break between batches if needed
+    ///
     /// This method determines if the current processing index is at the end of a batch
     /// (but not the final item overall), and if so, pauses processing for the configured
     /// duration to allow GPU memory to clear.
@@ -285,7 +295,7 @@ impl BatchManager {
 }
 
 /// Statistics for batch processing
-/// 
+///
 /// Tracks and reports on the success and failure of image generation operations.
 /// Used to provide summary information to the user after processing is complete.
 #[derive(Debug, Default)]

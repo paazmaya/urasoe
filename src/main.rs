@@ -23,21 +23,25 @@ use config::{Args, Config};
 async fn main() -> Result<()> {
     let args: Args = Args::parse();
 
-    println!("{}", "ControlNet Image Generator Starting...".blue());    // Load configuration from file
+    println!("{}", "ControlNet Image Generator Starting...".blue()); // Load configuration from file
     let mut config: Config = Config::load(&args.config)?;
 
     // Override with command line arguments
     config.apply_args(&args);
 
     // Create API client with timeout for option validation
-    let client = api::StableDiffusionClient::with_timeout(&config.sd_api_url, config.validate_timeout_ms);
-    
+    let client =
+        api::StableDiffusionClient::with_timeout(&config.sd_api_url, config.validate_timeout_ms);
+
     // Validate configuration options if enabled
     if config.validate_options {
         match client.validate_config_options(&config).await {
             Ok(issues) => {
                 if !issues.is_empty() {
-                    println!("{}", "⚠️ Configuration validation issues found:".yellow().bold());
+                    println!(
+                        "{}",
+                        "⚠️ Configuration validation issues found:".yellow().bold()
+                    );
                     for issue in issues {
                         println!("{}", format!("  - {}", issue).yellow());
                     }
@@ -50,7 +54,7 @@ async fn main() -> Result<()> {
                 } else {
                     println!("{}", "✓ All configuration options are valid".green());
                 }
-            },
+            }
             Err(e) => {
                 println!("{} {}", "Failed to validate configuration:".yellow(), e);
                 println!("{}", "Continue anyway? (Y/n)".yellow());
@@ -62,7 +66,7 @@ async fn main() -> Result<()> {
             }
         }
     }
-    
+
     // Print effective configuration
     if config.verbose {
         println!("{} {}", "Using ControlNet model:".blue(), config.model);
@@ -80,7 +84,8 @@ async fn main() -> Result<()> {
             "{} {}",
             "Using checkpoint model:".blue(),
             config.checkpoint_model
-        );        println!(
+        );
+        println!(
             "{} {} {}",
             "Using sampler:".blue(),
             config.sampler_name,
@@ -88,7 +93,8 @@ async fn main() -> Result<()> {
         );
         println!("{} {}", "Reading images from:".blue(), config.input_dir);
         println!("{} {}", "Saving output to:".blue(), config.output_dir);
-        println!("{} {}", "Batch size:".blue(), config.batch_size);        println!(
+        println!("{} {}", "Batch size:".blue(), config.batch_size);
+        println!(
             "{} {}x{}",
             "Image dimensions:".blue(),
             config.width,
@@ -96,22 +102,17 @@ async fn main() -> Result<()> {
         );
         println!("{} {}", "Sampling steps:".blue(), config.steps);
         println!("{} {}", "CFG scale:".blue(), config.cfg);
-        println!("{} {}", "Max retries:".blue(), config.max_retries);        println!(
-            "{} {}ms",
-            "Retry delay:".blue(),
-            config.retry_delay_ms
-        );        println!(
-            "{} {}ms",
-            "Batch break:".blue(),
-            config.batch_break_ms
-        );
+        println!("{} {}", "Max retries:".blue(), config.max_retries);
+        println!("{} {}ms", "Retry delay:".blue(), config.retry_delay_ms);
+        println!("{} {}ms", "Batch break:".blue(), config.batch_break_ms);
     }
 
     // Ensure output directory exists
     fs::create_dir_all(&config.output_dir).context("Failed to create output directory")?;
 
     // Using our improved image processor
-    let image_paths: Vec<std::path::PathBuf> = image::ImageProcessor::get_image_list(&config.input_dir)?;
+    let image_paths: Vec<std::path::PathBuf> =
+        image::ImageProcessor::get_image_list(&config.input_dir)?;
 
     if image_paths.is_empty() {
         println!("{} {}", "No images found in".red(), config.input_dir);
@@ -147,8 +148,11 @@ async fn main() -> Result<()> {
             .process_with_retry(&sd_client, &image_path, &config)
             .await;
 
-        match result {            Ok(Some(generated)) => {
-                if file_utils::FileManager::save_generated_images(&generated, image_path, &config).is_ok() {
+        match result {
+            Ok(Some(generated)) => {
+                if file_utils::FileManager::save_generated_images(&generated, image_path, &config)
+                    .is_ok()
+                {
                     stats.success_count += 1;
                     stats.generated_count += generated.images.len();
                 } else {

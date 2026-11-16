@@ -1,9 +1,12 @@
 //! API module tests for urasoe
 
-use std::path::Path;
-use urasoe::api::{StableDiffusionClient, load_model as legacy_load_model, generate_with_controlnet as legacy_generate_with_controlnet};
-use urasoe::config::Config;
 use reqwest::Client;
+use std::path::Path;
+use urasoe::api::{
+    StableDiffusionClient, generate_with_controlnet as legacy_generate_with_controlnet,
+    load_model as legacy_load_model,
+};
+use urasoe::config::Config;
 
 #[tokio::test]
 async fn test_stable_diffusion_client_new() {

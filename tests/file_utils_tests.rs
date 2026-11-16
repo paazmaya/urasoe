@@ -1,16 +1,19 @@
 //! File utils module tests for urasoe
 
-
 #[test]
 fn test_save_generated_images_empty() {
     let temp_dir = tempfile::tempdir().unwrap();
     let config = urasoe::config::Config::load("nonexistent_file.yml").unwrap();
     let fake_path = temp_dir.path().join("input.png");
-    let result = urasoe::file_utils::FileManager::save_generated_images(&urasoe::api::StableDiffusionResponse {
-        images: vec![],
-        parameters: None,
-        info: None,
-    }, &fake_path, &config);
+    let result = urasoe::file_utils::FileManager::save_generated_images(
+        &urasoe::api::StableDiffusionResponse {
+            images: vec![],
+            parameters: None,
+            info: None,
+        },
+        &fake_path,
+        &config,
+    );
     assert!(result.is_ok());
 }
 
@@ -19,11 +22,15 @@ fn test_save_generated_images_invalid_base64() {
     let temp_dir = tempfile::tempdir().unwrap();
     let config = urasoe::config::Config::load("nonexistent_file.yml").unwrap();
     let fake_path = temp_dir.path().join("input.png");
-    let result = urasoe::file_utils::FileManager::save_generated_images(&urasoe::api::StableDiffusionResponse {
-        images: vec!["not_base64".to_string()],
-        parameters: None,
-        info: None,
-    }, &fake_path, &config);
+    let result = urasoe::file_utils::FileManager::save_generated_images(
+        &urasoe::api::StableDiffusionResponse {
+            images: vec!["not_base64".to_string()],
+            parameters: None,
+            info: None,
+        },
+        &fake_path,
+        &config,
+    );
     assert!(result.is_err());
 }
 
@@ -34,12 +41,17 @@ fn test_save_generated_images_valid_base64() {
     config.output_dir = temp_dir.path().to_string_lossy().to_string();
     let fake_path = temp_dir.path().join("input.png");
     // Create a valid 1x1 PNG image in base64
-    let png_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAgMBApUAAAAASUVORK5CYII=";
-    let result = urasoe::file_utils::FileManager::save_generated_images(&urasoe::api::StableDiffusionResponse {
-        images: vec![png_base64.to_string()],
-        parameters: None,
-        info: None,
-    }, &fake_path, &config);
+    let png_base64 =
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAgMBApUAAAAASUVORK5CYII=";
+    let result = urasoe::file_utils::FileManager::save_generated_images(
+        &urasoe::api::StableDiffusionResponse {
+            images: vec![png_base64.to_string()],
+            parameters: None,
+            info: None,
+        },
+        &fake_path,
+        &config,
+    );
     assert!(result.is_ok());
     // Check that the image file was created
     let base_name = fake_path.file_stem().unwrap().to_string_lossy();
@@ -54,12 +66,17 @@ fn test_save_generated_images_metadata_created() {
     let mut config = urasoe::config::Config::load("nonexistent_file.yml").unwrap();
     config.output_dir = temp_dir.path().to_string_lossy().to_string();
     let fake_path = temp_dir.path().join("input.png");
-    let png_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAgMBApUAAAAASUVORK5CYII=";
-    let result = urasoe::file_utils::FileManager::save_generated_images(&urasoe::api::StableDiffusionResponse {
-        images: vec![png_base64.to_string()],
-        parameters: None,
-        info: None,
-    }, &fake_path, &config);
+    let png_base64 =
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAgMBApUAAAAASUVORK5CYII=";
+    let result = urasoe::file_utils::FileManager::save_generated_images(
+        &urasoe::api::StableDiffusionResponse {
+            images: vec![png_base64.to_string()],
+            parameters: None,
+            info: None,
+        },
+        &fake_path,
+        &config,
+    );
     assert!(result.is_ok());
     let base_name = fake_path.file_stem().unwrap().to_string_lossy();
     let output_subdir = temp_dir.path().join(&*base_name);
@@ -74,7 +91,8 @@ fn test_save_generated_images_unwritable_dir() {
     use std::fs;
     let mut config = urasoe::config::Config::load("nonexistent_file.yml").unwrap();
     let fake_path = std::path::Path::new("input.png");
-    let png_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAgMBApUAAAAASUVORK5CYII=";
+    let png_base64 =
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAgMBApUAAAAASUVORK5CYII=";
 
     #[cfg(unix)]
     {
@@ -91,11 +109,15 @@ fn test_save_generated_images_unwritable_dir() {
         perms.set_mode(0o555); // read and execute only
         fs::set_permissions(&unwritable, perms).unwrap();
         config.output_dir = unwritable.to_string_lossy().to_string();
-        let result = urasoe::file_utils::FileManager::save_generated_images(&urasoe::api::StableDiffusionResponse {
-            images: vec![png_base64.to_string()],
-            parameters: None,
-            info: None,
-        }, fake_path, &config);
+        let result = urasoe::file_utils::FileManager::save_generated_images(
+            &urasoe::api::StableDiffusionResponse {
+                images: vec![png_base64.to_string()],
+                parameters: None,
+                info: None,
+            },
+            fake_path,
+            &config,
+        );
         assert!(result.is_err());
     }
     #[cfg(windows)]
@@ -108,11 +130,15 @@ fn test_save_generated_images_unwritable_dir() {
         perms.set_readonly(true);
         fs::set_permissions(&unwritable_file, perms).unwrap();
         config.output_dir = unwritable_file.to_string_lossy().to_string();
-        let result = urasoe::file_utils::FileManager::save_generated_images(&urasoe::api::StableDiffusionResponse {
-            images: vec![png_base64.to_string()],
-            parameters: None,
-            info: None,
-        }, fake_path, &config);
+        let result = urasoe::file_utils::FileManager::save_generated_images(
+            &urasoe::api::StableDiffusionResponse {
+                images: vec![png_base64.to_string()],
+                parameters: None,
+                info: None,
+            },
+            fake_path,
+            &config,
+        );
         assert!(result.is_err());
     }
 }

@@ -14,7 +14,10 @@ fn test_get_image_list_empty_dir() {
 fn test_get_image_list_with_images() {
     let temp_dir = tempfile::tempdir().unwrap();
     let img_path = temp_dir.path().join("test.png");
-    std::fs::File::create(&img_path).unwrap().write_all(&[0u8, 1, 2, 3]).unwrap();
+    std::fs::File::create(&img_path)
+        .unwrap()
+        .write_all(&[0u8, 1, 2, 3])
+        .unwrap();
     let images = ImageProcessor::get_image_list(temp_dir.path().to_str().unwrap()).unwrap();
     assert_eq!(images.len(), 1);
 }

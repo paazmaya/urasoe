@@ -48,7 +48,7 @@ impl ImageProcessor {
     }
 
     /// Convert an image file to base64 string
-    /// 
+    ///
     /// Reads an image file from disk and encodes it as a base64 string.
     /// This is used for transmitting images to the Stable Diffusion API.
     ///

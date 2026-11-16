@@ -3,8 +3,8 @@
  *
  * This module provides structures and methods for reading and managing
  * configuration settings from both command line arguments and a configuration file.
- * 
- * The default values defined in this file are synchronized with those in the 
+ *
+ * The default values defined in this file are synchronized with those in the
  * urasoe.config.yml file. If changes are made to the default configuration,
  * both this file and the YAML file should be updated to maintain consistency.
  */
@@ -75,14 +75,15 @@ pub struct Args {
 
     /// Delay between retries in milliseconds
     #[arg(long)]
-    pub retry_delay: Option<u64>,    /// Break duration between batches in milliseconds
+    pub retry_delay: Option<u64>,
+    /// Break duration between batches in milliseconds
     #[arg(long)]
     pub batch_break: Option<u64>,
-    
+
     /// Whether to validate options against the SD webui
     #[arg(long)]
     pub validate_options: Option<bool>,
-    
+
     /// Timeout for validation requests in milliseconds
     #[arg(long)]
     pub validate_timeout: Option<u64>,
@@ -162,7 +163,7 @@ pub struct Config {
     pub max_retries: u32,
     #[serde(default = "default_retry_delay")]
     /// Delay between retries in milliseconds
-    pub retry_delay_ms: u64,    // Batch processing settings
+    pub retry_delay_ms: u64, // Batch processing settings
     #[serde(default = "default_batch_break")]
     /// Break duration between batches in milliseconds
     pub batch_break_ms: u64,
@@ -293,7 +294,8 @@ impl Config {
                 checkpoint_model: default_checkpoint_model(),
                 sd_api_url: default_sd_api_url(),
                 prompt: default_prompt(),
-                negative_prompt: default_negative_prompt(),                max_retries: default_max_retries(),
+                negative_prompt: default_negative_prompt(),
+                max_retries: default_max_retries(),
                 retry_delay_ms: default_retry_delay(),
                 batch_break_ms: default_batch_break(),
                 validate_options: default_validate_options(),

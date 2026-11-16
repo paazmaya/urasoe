@@ -6,19 +6,19 @@ pub struct ApiOptionsResponse {
     /// Available ControlNet models
     #[serde(default)]
     pub controlnet_models: Vec<String>,
-    
+
     /// Available ControlNet preprocessors (modules)
     #[serde(default)]
     pub controlnet_preprocessors: Vec<String>,
-    
+
     /// Available samplers
     #[serde(default)]
     pub samplers: Vec<String>,
-    
+
     /// Available SD models (checkpoints)
     #[serde(default)]
     pub sd_models: Vec<String>,
-    
+
     /// Available schedulers
     #[serde(default)]
     pub schedulers: Vec<String>,
